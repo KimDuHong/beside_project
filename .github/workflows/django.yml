@@ -61,3 +61,4 @@ jobs:
             cd beside_project
             git pull origin main
             docker-compose up --build --force-recreate -d
+            docker image prune -f
