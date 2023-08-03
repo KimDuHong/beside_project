@@ -5,7 +5,7 @@ ENV PYTHONUNBUFFERED 1
 RUN apt-get update \
     && apt-get -y install vim \
     && rm -rf /var/lib/apt/lists/*
-
+    
 ARG SECRET_KEY
 ENV SECRET_KEY=$SECRET_KEY
 
