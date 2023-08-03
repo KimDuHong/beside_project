@@ -6,6 +6,9 @@ RUN apt-get update \
     && apt-get -y install vim \
     && rm -rf /var/lib/apt/lists/*
 
+ARG SECRET_KEY
+ENV SECRET_KEY=$SECRET_KEY
+
 RUN mkdir /beside_project
 COPY . /beside_project/
 WORKDIR /beside_project
