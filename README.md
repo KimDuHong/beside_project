@@ -1,6 +1,6 @@
 # beside_project
 
-[![codecov](https://codecov.io/gh/KimDuHong/beside_project/branch/main/graph/badge.svg?token=VTKIOR9MIT)](https://codecov.io/gh/KimDuHong/okPosTest)
+[![codecov](https://codecov.io/gh/KimDuHong/beside_project/branch/main/graph/badge.svg?token=UL025f7MdR)](https://codecov.io/gh/KimDuHong/beside_project)
 
 
 > ### INSTALLATION
