@@ -1,0 +1,43 @@
+name: Django CI
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Build Docker image Test
+        run: docker build -t django:test .
+
+      - name: Django Container Test
+        run: |
+          docker run --name django-container django:test pytest --cov --cov-report=xml
+          docker cp django-container:/okpos/coverage.xml ${{ github.workspace }}/coverage.xml
+
+      - name: Upload coverage reports to Codecov
+        uses: codecov/codecov-action@v3
+
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v2
+
+      - name: SSH to Naver Cloud
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.NAVER_CLOUD_HOST }}
+          username: ${{ secrets.NAVER_CLOUD_USERNAME }}
+          password: ${{ secrets.NAVER_CLOUD_PASSWORD }}
+          port: ${{ secrets.NAVER_CLOUD_PORT }}
+          script: |
+            cd beside_project
+            git pull origin main
+            docker-compose up --build -d
