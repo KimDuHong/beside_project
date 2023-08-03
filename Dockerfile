@@ -20,6 +20,5 @@ COPY poetry.lock pyproject.toml /beside_project/
 
 RUN poetry export -f requirements.txt --output requirements.txt --without-hashes
 RUN pip install -r requirements.txt
-RUN python manage.py migrate
 # RUN poetry config virtualenvs.create false
 # RUN poetry install --no-interaction --no-ansi
