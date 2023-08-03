@@ -11,4 +11,4 @@ services:
       - .:/beside_project
     env_file:
       - .env
-    command: bash /beside_project/build.sh
+    command: bash ./build.sh

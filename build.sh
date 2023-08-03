@@ -11,7 +11,8 @@ python manage.py collectstatic --noinput
 
 echo "==> 배포!"
 
-if [ "$SERVER" == "DEV" ]; then
+if [[ "$SERVER" == "DEV" ]]
+then
     echo "Deploy Gunicorn"
     gunicorn config.wsgi:application --bind 0.0.0.0:8000
 else
