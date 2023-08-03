@@ -12,3 +12,4 @@ services:
       - .env
 
     command: sh /beside_project/build.sh
+    container_name: DJANGO_SERVER

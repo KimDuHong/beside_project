@@ -41,7 +41,6 @@ jobs:
           file: ./coverage.xml
           fail_ci_if_error: true
           verbose: true
-          report: ${{ github.event_name == 'pull_request' }}
 
   deploy:
     needs: test
