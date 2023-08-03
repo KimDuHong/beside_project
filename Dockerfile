@@ -5,7 +5,7 @@ ENV PYTHONUNBUFFERED 1
 RUN apt-get update \
     && apt-get -y install vim \
     && rm -rf /var/lib/apt/lists/*
-    
+
 ARG SECRET_KEY
 ENV SECRET_KEY=$SECRET_KEY
 
@@ -23,5 +23,3 @@ RUN pip install -r requirements.txt
 RUN python manage.py migrate
 # RUN poetry config virtualenvs.create false
 # RUN poetry install --no-interaction --no-ansi
-
-CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]
