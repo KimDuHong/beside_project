@@ -35,12 +35,8 @@ jobs:
 
       - name: Upload coverage reports to Codecov
         uses: codecov/codecov-action@v3
-        with:
-          token: ${{ secrets.CODECOV_TOKEN }}
-          flags: unittests
-          file: coverage.xml
-          verbose: true
-          report: ${{ github.event_name == 'pull_request' }}
+        env:
+          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
 
   deploy:
     needs: test
