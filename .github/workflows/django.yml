@@ -19,12 +19,13 @@ jobs:
       - name: Django Container Test
         run: |
           docker run --name django-container django:test pytest --cov --cov-report=xml
-          docker cp django-container:/okpos/coverage.xml ${{ github.workspace }}/coverage.xml
+          docker cp django-container:/beside_project/coverage.xml ${{ github.workspace }}/coverage.xml
 
       - name: Upload coverage reports to Codecov
         uses: codecov/codecov-action@v3
 
   deploy:
+    needs: build
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repo
