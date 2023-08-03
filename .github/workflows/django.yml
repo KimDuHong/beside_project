@@ -17,7 +17,9 @@ jobs:
         run: docker build -t django:test .
 
       - name: Run Pytest in Docker container
-        run: docker run --rm django:test pytest
+        run: |
+          docker run --rm django:test pytest --cov --cov-report=xml
+          docker cp djangotest:/beside_project/coverage.xml ${{ github.workspace }}/coverage.xml
 
       - name: Upload coverage reports to Codecov
         uses: codecov/codecov-action@v3
@@ -41,4 +43,4 @@ jobs:
           script: |
             cd beside_project
             git pull origin main
-            docker-compose up --build -d
+            docker-compose up --build --force-recreate
