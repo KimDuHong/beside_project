@@ -24,8 +24,10 @@ jobs:
 
       - name: Run Pytest in Docker container
         run: |
-          docker run --rm django:test pytest --cov --cov-report=xml
-          docker cp $(docker ps -q -f name=django:test):/beside_project/coverage.xml ${{ github.workspace }}/coverage.xml
+          docker run -d --name djangotest django:test tail -f /dev/null
+          docker exec djangotest pytest --cov --cov-report=xml
+          docker cp djangotest:/beside_project/coverage.xml ${GITHUB_WORKSPACE}/coverage.xml
+          docker rm -f djangotest
 
       - name: Save Python package cache
         uses: actions/cache@v2
