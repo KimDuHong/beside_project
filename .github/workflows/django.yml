@@ -13,13 +13,25 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
 
+      - name: Restore Python package cache
+        uses: actions/cache@v2
+        with:
+          path: ~/.cache/pip
+          key: ${{ runner.os }}-pip-${{ hashFiles('**/poetry.lock') }}
+
       - name: Build Docker image
         run: docker build -t django:test .
 
       - name: Run Pytest in Docker container
         run: |
           docker run --rm django:test pytest --cov --cov-report=xml
-          docker cp djangotest:/beside_project/coverage.xml ${{ github.workspace }}/coverage.xml
+          docker cp $(docker ps -q -f name=django:test):/beside_project/coverage.xml ${{ github.workspace }}/coverage.xml
+
+      - name: Save Python package cache
+        uses: actions/cache@v2
+        with:
+          path: ~/.cache/pip
+          key: ${{ runner.os }}-pip-${{ hashFiles('**/poetry.lock') }}
 
       - name: Upload coverage reports to Codecov
         uses: codecov/codecov-action@v3
