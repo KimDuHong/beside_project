@@ -15,7 +15,7 @@ jobs:
 
       - name: Build Docker image Test
 
-        run: docker build django:test\
+        run: docker build . django:test\
           --platform linux/amd64 \
           --build-arg SECRET_KEY='${{ secrets.SECRET_KEY }}'
 
