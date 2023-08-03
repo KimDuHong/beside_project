@@ -6,20 +6,18 @@ on:
       - main
 
 jobs:
-  build:
+  test:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repository
+      - name: Checkout code
         uses: actions/checkout@v2
 
-      - name: Build Docker image Test
-        run: docker build -t django:test . --build-arg SECRET_KEY=${{ secrets.SECRET_KEY }}
+      - name: Build Docker image
+        run: docker build -t django:test --build-arg SECRET_KEY=${{ secrets.SECRET_KEY }} .
 
-      - name: Django Container Test
-        run: |
-          docker run --name django-container django:test pytest --cov --cov-report=xml
-          docker cp django-container:/beside_project/coverage.xml ${{ github.workspace }}/coverage.xml
+      - name: Run Pytest in Docker container
+        run: docker run --rm django:test pytest
 
       - name: Upload coverage reports to Codecov
         uses: codecov/codecov-action@v3
