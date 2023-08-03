@@ -10,5 +10,9 @@ echo "==> collect static 실행"
 python manage.py collectstatic --noinput
 
 echo "==> 배포!"
-python manage.py runserver 0.0.0.0:8000
+source .env
+if [[ "$SERVER" == True ]]; then
+    gunicorn myproject.wsgi:application --bind 0.0.0.0:8000
+else
+    python manage.py runserver 0.0.0.0:8000
 # gunicorn --bind 0.0.0.0:8000 config.wsgi:application
