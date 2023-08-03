@@ -2,8 +2,6 @@ name: Django CI
 
 on:
   push:
-    branches:
-      - main
 
 jobs:
   test:
@@ -37,8 +35,12 @@ jobs:
 
       - name: Upload coverage reports to Codecov
         uses: codecov/codecov-action@v3
-        env:
-          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          flags: unittests
+          file: coverage.xml
+          verbose: true
+          report: ${{ github.event_name == 'pull_request' }}
 
   deploy:
     needs: test
