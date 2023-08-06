@@ -1,4 +1,4 @@
-FROM python:3.10.7
+FROM python:3.8.16
 
 ENV PYTHONUNBUFFERED 1
 

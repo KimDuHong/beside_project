@@ -42,7 +42,9 @@ THIRD_PARTY_APPS = [
     "rest_framework",
     "debug_toolbar",
 ]
-CUSTOM_APPS = []
+CUSTOM_APPS = [
+    "users.apps.UsersConfig",
+]
 
 SYSTEM_APPS = [
     "django.contrib.admin",
@@ -159,6 +161,7 @@ CSRF_TRUSTED_ORIGINS = [
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+AUTH_USER_MODEL = "users.User"
 
 import sentry_sdk
 from sentry_sdk.integrations.django import DjangoIntegration
@@ -181,3 +184,6 @@ if SERVER:
         # django.contrib.auth) you may enable sending PII data.
         send_default_pii=True,
     )
+
+NCP_ACCESS_KEY = os.environ.get("NCP_ACCESS_KEY")
+NCP_SECRET_KEY = os.environ.get("NCP_SECRET_KEY")
