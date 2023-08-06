@@ -55,7 +55,7 @@ class GetUploadURL(APIView):
             ".jpeg",
         ]:
             return Response({"error": "Filename not provided"}, status=400)
-        filename = f"gif/{filename}"
+        filename = f"memes/gif/{filename}"
         response = presigned_s3_upload(filename)
         return Response(response)
 
