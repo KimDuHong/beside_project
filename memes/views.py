@@ -63,3 +63,8 @@ class GetUploadURL(APIView):
         object_name = f"gif/{filename}.gif"
         response = s3.generate_presigned_post(bucket_name, object_name)
         return Response(response)
+
+
+class Memes(APIView):
+    def get(self, request):
+        return Response({1})
