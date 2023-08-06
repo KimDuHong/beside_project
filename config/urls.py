@@ -7,7 +7,7 @@ from django.conf import settings
 
 schema_view = get_schema_view(
     openapi.Info(
-        title="CurB backend API",
+        title="Miimgoo backend API",
         default_version="v1",
         description="https://github.com/KimDuHong/beside_project",
     ),

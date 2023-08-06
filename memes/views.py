@@ -67,4 +67,18 @@ class GetUploadURL(APIView):
 
 class Memes(APIView):
     def get(self, request):
-        return Response({1})
+        pass
+
+    def post(self, request):
+        pass
+
+
+class DetailMeme(APIView):
+    def get(self, request, pk):
+        pass
+
+    def put(self, request, pk):
+        pass
+
+    def delete(self, request, pk):
+        pass
