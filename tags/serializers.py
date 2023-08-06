@@ -7,7 +7,6 @@ class TagSerializer(ModelSerializer):
     class Meta:
         model = Tag
         fields = (
-            "pk",
             "name",
             "type",
         )

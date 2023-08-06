@@ -16,5 +16,11 @@ class Tag(CommonModel):
         choices=TypeChoices.choices,
     )
 
+    class Meta:
+        unique_together = (
+            "name",
+            "type",
+        )
+
     def __str__(self) -> str:
         return f"{self.type} : {self.name}"

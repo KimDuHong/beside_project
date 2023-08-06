@@ -2,10 +2,9 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
-from urllib.parse import urlparse, urlunparse
 import os
 
-from .s3_connect import connect_s3, presigned_s3_upload, presigned_s3_view
+from .s3_connect import presigned_s3_upload, presigned_s3_view
 from .serializers import MemeSerializer
 
 
@@ -65,12 +64,33 @@ class Memes(APIView):
     def get(self, request):
         pass
 
+    @swagger_auto_schema(
+        operation_id="Create a new meme",
+        operation_description="Required URL is s3 endpoint URL",
+        request_body=openapi.Schema(
+            type=openapi.TYPE_OBJECT,
+            properties={
+                "title": openapi.Schema(
+                    type=openapi.TYPE_STRING, description="Title of the meme"
+                ),
+                "meme_url": openapi.Schema(
+                    type=openapi.TYPE_STRING, description="URL of the meme"
+                ),
+                "tags": openapi.Schema(
+                    type=openapi.TYPE_ARRAY,
+                    items=openapi.Items(type=openapi.TYPE_STRING),
+                    description="Tags of the meme, Must be list",
+                ),
+            },
+            required=["title", "meme_url", "tags"],
+        ),
+        responses={
+            201: MemeSerializer(),
+            400: "Bad Request ( does not valid data )",
+            404: "Not Found ( does not exist tags name )",
+        },
+    )
     def post(self, request):
-        url = request.data.get("meme_url")
-        parsed_url = urlparse(url)
-        cleaned_url = urlunparse(parsed_url._replace(query=""))
-        request.data["meme_url"] = cleaned_url
-
         serializer = MemeSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save(tags=request.data.get("tags"))
