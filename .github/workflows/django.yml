@@ -19,13 +19,6 @@ jobs:
 
       - name: Build Docker image
         run: |
-          docker build . \
-            --build-arg SECRET_KEY=${{ secrets.SECRET_KEY }} \
-            --build-arg NCP_SECRET_KEY=${{ secrets.NCP_SECRET_KEY }} \
-            --build-arg NCP_ACCESS_KEY=${{ secrets.NCP_ACCESS_KEY }} \
-            -t django:test
-      - name: Build Docker image
-        run: |
           docker buildx \
           build --platform linux/amd64 \
           -t django:test \
