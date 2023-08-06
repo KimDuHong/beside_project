@@ -1,3 +1,8 @@
-from django.test import TestCase
+import pytest
 
-# Create your tests here.
+
+# Shop/product GET TEST
+@pytest.mark.django_db
+class TestofTest:
+    def test_pytest(self):
+        assert 1 == 1
