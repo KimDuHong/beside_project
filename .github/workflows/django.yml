@@ -18,10 +18,12 @@ jobs:
           key: ${{ runner.os }}-pip-${{ hashFiles('**/poetry.lock') }}
 
       - name: Build Docker image
-        run: docker build -t django:test
-          --build-arg SECRET_KEY=${{ secrets.SECRET_KEY }} \
-          --build-arg NCP_SECRET_KEY=${{ secrets.NCP_SECRET_KEY }} \
-          --build-arg NCP_ACCESS_KEY=${{ secrets.NCP_ACCESS_KEY }} .
+        run: |
+          docker build . \
+            --build-arg SECRET_KEY=${{ secrets.SECRET_KEY }} \
+            --build-arg NCP_SECRET_KEY=${{ secrets.NCP_SECRET_KEY }} \
+            --build-arg NCP_ACCESS_KEY=${{ secrets.NCP_ACCESS_KEY }} \
+            -t django:test
 
       - name: Run Pytest in Docker container
         run: |
