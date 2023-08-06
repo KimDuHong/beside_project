@@ -3,7 +3,7 @@ from rest_framework.response import Response
 from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
 import os
-
+from .models import Meme as Meme_model
 from .s3_connect import presigned_s3_upload, presigned_s3_view
 from .serializers import MemeSerializer
 
@@ -62,7 +62,9 @@ class GetUploadURL(APIView):
 
 class Memes(APIView):
     def get(self, request):
-        pass
+        meme = Meme_model.objects.all()
+        serializer = MemeSerializer(meme, many=True)
+        return Response(serializer.data)
 
     @swagger_auto_schema(
         operation_id="Create a new meme",

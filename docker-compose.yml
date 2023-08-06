@@ -24,5 +24,6 @@ services:
       - static_volume:/static/file
     depends_on:
       - backend
+
 volumes:
   static_volume:
