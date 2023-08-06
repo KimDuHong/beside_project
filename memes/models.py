@@ -1,22 +1,48 @@
 from django.db import models
 from common.models import CommonModel
-from django.db.models import Count
-from django.core.exceptions import ValidationError
+from tags.models import Tag
+from PIL import Image
+import imageio
+import requests
+from io import BytesIO
+from .s3_connect import connect_s3, presigned_s3_view
+from uuid import uuid4
 
 
-class Feed(CommonModel):
-    thumbnail = models.URLField()
-    meme_gif = models.URLField()
+class Meme(CommonModel):
+    title = models.CharField(max_length=100)
+    thumbnail = models.URLField(editable=False)
+    meme_url = models.URLField()
+    tags = models.ManyToManyField(Tag, related_name="tags")
 
     @property
-    def thumbnail(self):
-        image = self.images.first()
-        if image:
-            return image.url
-        else:
-            return None
+    def all_tags(self):
+        return self.tags.all()
 
-    def clean(self):
-        super().clean()
-        if self.category.group != self.group:
-            raise ValidationError("그룹의 카테고리 내에서 선택해주세요.")
+    def save(self, *args, **kwargs):
+        s3 = connect_s3()
+        filename = self.meme_url.split("https://kr.object.ncloudstorage.com/miimgoo/")[
+            -1
+        ]
+        if filename[-4:] == ".gif":
+            signed_url = presigned_s3_view("get_object", filename)
+            response = requests.get(signed_url)
+            gif = imageio.mimread(BytesIO(response.content))
+            first_frame = Image.fromarray(gif[0])
+
+            # 첫 번째 프레임을 임시 파일에 저장
+            temp_file = BytesIO()
+            first_frame.save(temp_file, format="JPEG")
+            # 임시 파일을 NCP Object Storage에 업로드
+            temp_file.seek(0)
+            filename = filename.split("/gif/")[-1][:-4]
+            file_name = f"memes/thumbnails/{uuid4()}.jpg"
+
+            s3.upload_fileobj(temp_file, "miimgoo", file_name)
+
+            # thumbnail 필드에 NCP Object Storage URL 저장
+            self.thumbnail = f"https://kr.object.ncloudstorage.com/miimgoo/{file_name}"
+        else:
+            self.thumbnail = self.meme_url
+
+        super().save(*args, **kwargs)
