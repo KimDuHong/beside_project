@@ -1,10 +1,12 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from django.conf import settings
 from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
-import boto3
-from django.conf import settings
+from urllib.parse import urlparse, urlunparse
+import os
+
+from .s3_connect import connect_s3, presigned_s3_upload, presigned_s3_view
+from .serializers import MemeSerializer
 
 
 class GetUploadURL(APIView):
@@ -16,7 +18,7 @@ class GetUploadURL(APIView):
             properties={
                 "filename": openapi.Schema(
                     type=openapi.TYPE_STRING,
-                    description="The name of the file to be uploaded.",
+                    description="The name of the file to be uploaded. Contains .gif",
                 )
             },
             required=["filename"],
@@ -40,28 +42,22 @@ class GetUploadURL(APIView):
                     },
                 ),
             ),
+            400: openapi.Response(
+                description="Error, if filename null or does not contain .gif or .jpg or .jpeg"
+            ),
         },
     )
     def post(self, request):
-        service_name = "s3"
-        endpoint_url = "https://kr.object.ncloudstorage.com"
-        access_key = settings.NCP_ACCESS_KEY
-        secret_key = settings.NCP_SECRET_KEY
-        s3 = boto3.client(
-            service_name,
-            endpoint_url=endpoint_url,
-            aws_access_key_id=access_key,
-            aws_secret_access_key=secret_key,
-        )
-
-        bucket_name = "miimgoo"
-
         filename = request.data.get("filename")  # Get filename from client
-        if not filename:
-            return Response({"error": "Filename not provided"}, status=400)
 
-        object_name = f"gif/{filename}.gif"
-        response = s3.generate_presigned_post(bucket_name, object_name)
+        if not filename or os.path.splitext(filename)[1] not in [
+            ".gif",
+            ".jpg",
+            ".jpeg",
+        ]:
+            return Response({"error": "Filename not provided"}, status=400)
+        filename = f"gif/{filename}"
+        response = presigned_s3_upload(filename)
         return Response(response)
 
 
@@ -70,7 +66,16 @@ class Memes(APIView):
         pass
 
     def post(self, request):
-        pass
+        url = request.data.get("meme_url")
+        parsed_url = urlparse(url)
+        cleaned_url = urlunparse(parsed_url._replace(query=""))
+        request.data["meme_url"] = cleaned_url
+
+        serializer = MemeSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save(tags=request.data.get("tags"))
+            return Response(serializer.data, status=201)
+        return Response(serializer.errors, status=400)
 
 
 class DetailMeme(APIView):

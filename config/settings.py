@@ -44,6 +44,8 @@ THIRD_PARTY_APPS = [
 ]
 CUSTOM_APPS = [
     "users.apps.UsersConfig",
+    "memes.apps.MemesConfig",
+    "tags.apps.TagsConfig",
 ]
 
 SYSTEM_APPS = [
