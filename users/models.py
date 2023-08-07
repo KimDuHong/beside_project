@@ -27,9 +27,5 @@ class User(AbstractUser):
         choices=SNS_choices.choices,
     )
 
-    # @property
-    # def _coach(self):
-    #     return self.group.coach == self
-
     def __str__(self) -> str:
         return f"{self.username}"

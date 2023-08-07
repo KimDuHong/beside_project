@@ -17,12 +17,13 @@ class UserMe(APIView):
     permission_classes = [IsAuthenticated]
 
     @swagger_auto_schema(
-        operation_summary="요청한 유저의 정보를 가져오는 api",
+        operation_summary="Request user info",
         responses={
             200: openapi.Response(
                 description="Successful response",
                 schema=serializers.PrivateUserSerializer(),
             ),
+            403: "Permission denied",
         },
     )
     def get(self, request):
@@ -32,6 +33,19 @@ class UserMe(APIView):
 
 
 class KakaoLoginRequest(APIView):
+    @swagger_auto_schema(
+        operation_summary="KaKao Login Request",
+        responses={
+            200: openapi.Response(
+                description="Successful response",
+                examples={
+                    "application/json": {
+                        "url": "https://kauth.kakao.com/oauth/authorize?client_id=YOUR_CLIENT_ID&redirect_uri=YOUR_REDIRECT_URI&response_type=code"
+                    }
+                },
+            ),
+        },
+    )
     def get(self, request):
         kakaoParams = {
             "client_id": settings.KAKAO_CLIENT_ID,
@@ -48,25 +62,27 @@ class KakaoLoginRequest(APIView):
 
 class KakaoLogin(APIView):
     @swagger_auto_schema(
-        operation_summary="카카오 로그인 api",
+        operation_summary="KaKao Login",
+        request_body=openapi.Schema(
+            type=openapi.TYPE_OBJECT,
+            description="URL parameter code in redirect URL",
+            required=["code"],
+            properties={
+                "code": openapi.Schema(
+                    type=openapi.TYPE_STRING,
+                    description="URL parameter code in redirect URL",
+                )
+            },
+        ),
         responses={
             200: openapi.Response(
-                description="Successful response",
+                description="Successful login",
             ),
             201: openapi.Response(
                 description="Create user",
             ),
             400: "Bad request",
         },
-        manual_parameters=[
-            openapi.Parameter(
-                name="code",
-                in_=openapi.IN_QUERY,
-                description="카카오톡에서 제공해주는 code",
-                type=openapi.TYPE_STRING,
-                required=True,
-            )
-        ],
     )
     def post(self, request):
         try:
@@ -79,8 +95,8 @@ class KakaoLogin(APIView):
                     },
                     data={
                         "grant_type": "authorization_code",
-                        "client_id": "69ba16ba77556c01d4a4ea9911fc06ad",
-                        "redirect_uri": "https://bangsam.site/social/kakao",
+                        "client_id": settings.KAKAO_CLIENT_ID,
+                        "redirect_uri": settings.KAKAO_REDIRECT_URI,
                         "code": code,
                     },
                 )
@@ -94,22 +110,18 @@ class KakaoLogin(APIView):
                     "Content-Type": "application/x-www-form-urlencoded;charset=UTF-8",
                 },
             ).json()
-            # print(user_data)
             kakao_account = user_data.get("kakao_account")
             profile = kakao_account.get("profile")
             try:
                 user = User.objects.get(email=kakao_account.get("email"))
                 login(request, user)
-
                 return Response(status=200)
             except:
                 user = User.objects.create(
                     email=kakao_account.get("email"),
                     username=profile.get("nickname"),
                     name=profile.get("nickname"),
-                    avatar=profile.get("profile_image_url"),
-                    gender=kakao_account.get("gender"),
-                    is_kakao=True,
+                    sns_type="Kakao",
                 )
             user.set_unusable_password()
             user.save()
@@ -120,6 +132,19 @@ class KakaoLogin(APIView):
 
 
 class NaverLoginRequest(APIView):
+    @swagger_auto_schema(
+        operation_summary="Naver Login Request",
+        responses={
+            200: openapi.Response(
+                description="Successful response",
+                examples={
+                    "application/json": {
+                        "url": "https://nid.naver.com/oauth2.0/authorize?client_id=YOUR_CLIENT_ID&redirect_uri=YOUR_REDIRECT_URI&response_type=code"
+                    }
+                },
+            ),
+        },
+    )
     def get(self, request):
         naverParams = {
             "client_id": settings.NAVER_CLIENT_ID,
@@ -137,7 +162,22 @@ class NaverLoginRequest(APIView):
 
 class NaverLogin(APIView):
     @swagger_auto_schema(
-        operation_summary="네이버 로그인 api",
+        operation_summary="Naver Login",
+        request_body=openapi.Schema(
+            type=openapi.TYPE_OBJECT,
+            description="URL parameter code in redirect URL",
+            required=["code", "state"],
+            properties={
+                "code": openapi.Schema(
+                    type=openapi.TYPE_STRING,
+                    description="URL parameter code in redirect URL",
+                ),
+                "state": openapi.Schema(
+                    type=openapi.TYPE_STRING,
+                    description="miimgoo",
+                ),
+            },
+        ),
         responses={
             200: openapi.Response(
                 description="Successful response",
@@ -147,22 +187,6 @@ class NaverLogin(APIView):
             ),
             400: "Bad request",
         },
-        manual_parameters=[
-            openapi.Parameter(
-                name="code",
-                in_=openapi.IN_QUERY,
-                description="네이버에서 제공해주는 code",
-                type=openapi.TYPE_STRING,
-                required=True,
-            ),
-            openapi.Parameter(
-                name="state",
-                in_=openapi.IN_QUERY,
-                description="miimgoo",
-                type=openapi.TYPE_STRING,
-                required=True,
-            ),
-        ],
     )
     def post(self, request):
         code = request.data.get("code")
@@ -227,8 +251,8 @@ class LogOut(APIView):
     permission_classes = [IsAuthenticated]
 
     @swagger_auto_schema(
-        operation_summary="로그아웃 api",
-        operation_description="로그아웃",
+        operation_summary="Log out",
+        operation_description="Log out a user",
         responses={200: "OK", 403: "Forbidden"},
     )
     def post(self, request):

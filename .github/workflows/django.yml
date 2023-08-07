@@ -25,6 +25,11 @@ jobs:
           --build-arg SECRET_KEY='${{ secrets.SECRET_KEY }}' \
           --build-arg NCP_SECRET_KEY='${{ secrets.NCP_SECRET_KEY }}' \
           --build-arg NCP_ACCESS_KEY='${{ secrets.NCP_ACCESS_KEY }}' \
+          --build-arg NAVER_CLLIENT_ID='${{ secrets.DEV_NAVER_CLLIENT_ID }}' \
+          --build-arg NAVER_REDIRECT_URI='${{ secrets.DEV_NAVER_REDIRECT_URI }}' \
+          --build-arg NAVER_CLIENT_SECRET='${{ secrets.DEV_NAVER_CLIENT_SECRET }}' \
+          --build-arg KAKAO_CLLIENT_ID='${{ secrets.DEV_KAKAO_CLLIENT_ID }}' \
+          --build-arg KAKAO_REDIRECT_URI='${{ secrets.DEV_KAKAO_REDIRECT_URI }}' \
           .
 
       - name: Run Pytest in Docker container
