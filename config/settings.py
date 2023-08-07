@@ -168,9 +168,9 @@ AUTH_USER_MODEL = "users.User"
 import sentry_sdk
 from sentry_sdk.integrations.django import DjangoIntegration
 
-SERVER = os.environ.get("SERVER", False)
+SERVER = os.environ.get("SERVER", "local")
 
-if SERVER:
+if SERVER != "local":
     sentry_sdk.init(
         dsn="https://84d3956dc436b6d24b0c859eedbb6326@o4504859857387520.ingest.sentry.io/4505640866021376",
         integrations=[
