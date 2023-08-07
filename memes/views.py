@@ -53,6 +53,9 @@ class GetUploadURL(APIView):
             ".gif",
             ".jpg",
             ".jpeg",
+            ".GIF",
+            ".JPG",
+            ".JPEG",
         ]:
             return Response({"error": "Filename not provided"}, status=400)
         filename = f"memes/gif/{filename}"

@@ -189,3 +189,13 @@ if SERVER:
 
 NCP_ACCESS_KEY = os.environ.get("NCP_ACCESS_KEY")
 NCP_SECRET_KEY = os.environ.get("NCP_SECRET_KEY")
+
+if SERVER == "Prod":
+    NAVER_CLIENT_ID = os.environ.get("PROD_NAVER_CLLIENT_ID")
+    KAKAO_CLIENT_ID = os.environ.get("PROD_KAKAO_CLLIENT_ID")
+else:
+    NAVER_CLIENT_ID = os.environ.get("DEV_NAVER_CLLIENT_ID")
+    KAKAO_CLIENT_ID = os.environ.get("DEV_KAKAO_CLLIENT_ID")
+    NAVER_REDIRECT_URI = os.environ.get("NAVER_REDIRECT_URI")
+    KAKAO_REDIRECT_URI = os.environ.get("KAKAO_REDIRECT_URI")
+    NAVER_CLIENT_SECRET = os.environ.get("NAVER_CLIENT_SECRET")
