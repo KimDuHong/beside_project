@@ -2,6 +2,7 @@
 
 [![codecov](https://codecov.io/gh/KimDuHong/beside_project/branch/main/graph/badge.svg?token=UL025f7MdR)](https://codecov.io/gh/KimDuHong/beside_project)
 
+![example workflow](https://github.com/KimDuHong/beside_project/actions/workflows/django.yml/badge.svg)
 
 > ### INSTALLATION
 
