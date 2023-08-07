@@ -14,6 +14,23 @@ services:
       - .env
     command: bash ./build.sh
 
+  prod_backend:
+    container_name: PROD_SERVER
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - 8001:8001
+    volumes:
+      - .:/beside_project
+      - static_volume:/static/file
+    env_file:
+      - .env
+    environment:
+      SERVER: "Prod"
+
+    command: bash ./prod_build.sh
+
   nginx:
     container_name: NGINX
     build:
