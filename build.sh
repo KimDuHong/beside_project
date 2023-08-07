@@ -11,7 +11,7 @@ python manage.py default_tag
 
 echo "==> 배포!"
 
-if [[ "$SERVER" == "DEV" ]]
+if [[ "$SERVER" == "dev" ]]
 then
     echo "Deploy Gunicorn"
     echo "==> collect static 실행"

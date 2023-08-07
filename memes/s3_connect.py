@@ -29,9 +29,11 @@ def presigned_s3_view(filename, ExpiresIn=3600):
 
 def presigned_s3_upload(filename, ExpiresIn=3600):
     s3 = connect_s3()
-    signed_url = s3.generate_presigned_url(
-        "put_object",
-        Params={"Bucket": "miimgoo", "Key": filename},
-        ExpiresIn=ExpiresIn,  # URL이 유효한 시간(초 단위)
+    response = s3.generate_presigned_post(
+        "miimgoo",
+        filename,
+        Fields=None,
+        Conditions=None,
+        ExpiresIn=ExpiresIn,
     )
-    return signed_url
+    return response
