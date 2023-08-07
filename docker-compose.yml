@@ -16,7 +16,11 @@ services:
 
   nginx:
     container_name: NGINX
-    image: nginx:latest
+    build:
+      context: ./nginx/
+      dockerfile: Dockerfile
+      args:
+        SERVER: ${SERVER}
     ports:
       - 80:80
     volumes:
