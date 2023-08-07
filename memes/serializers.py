@@ -6,6 +6,7 @@ from django.shortcuts import get_object_or_404
 from tags.models import Tag
 from urllib.parse import urlparse, urlunparse
 from django.db.transaction import atomic
+from rest_framework import serializers
 
 
 class MemeSerializer(ModelSerializer):

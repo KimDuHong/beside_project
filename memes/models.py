@@ -25,7 +25,7 @@ class Meme(CommonModel):
             -1
         ]
         if filename[-4:] == ".gif":
-            signed_url = presigned_s3_view("get_object", filename)
+            signed_url = presigned_s3_view(filename)
             response = requests.get(signed_url)
             gif = imageio.mimread(BytesIO(response.content))
             first_frame = Image.fromarray(gif[0])

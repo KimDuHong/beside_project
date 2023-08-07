@@ -46,6 +46,8 @@ CUSTOM_APPS = [
     "users.apps.UsersConfig",
     "memes.apps.MemesConfig",
     "tags.apps.TagsConfig",
+    "comments.apps.CommentsConfig",
+    "favorites.apps.FavoritesConfig",
 ]
 
 SYSTEM_APPS = [

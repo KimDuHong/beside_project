@@ -17,10 +17,10 @@ def connect_s3():
     return s3
 
 
-def presigned_s3_view(type, filename, ExpiresIn=3600):
+def presigned_s3_view(filename, ExpiresIn=3600):
     s3 = connect_s3()
     signed_url = s3.generate_presigned_url(
-        type,
+        "get_object",
         Params={"Bucket": "miimgoo", "Key": filename},
         ExpiresIn=ExpiresIn,  # URL이 유효한 시간(초 단위)
     )
@@ -29,9 +29,9 @@ def presigned_s3_view(type, filename, ExpiresIn=3600):
 
 def presigned_s3_upload(filename, ExpiresIn=3600):
     s3 = connect_s3()
-    signed_url = s3.generate_presigned_post(
-        "miimgoo",
-        filename,
+    signed_url = s3.generate_presigned_url(
+        "get_object",
+        Params={"Bucket": "miimgoo", "Key": filename},
         ExpiresIn=ExpiresIn,  # URL이 유효한 시간(초 단위)
     )
     return signed_url

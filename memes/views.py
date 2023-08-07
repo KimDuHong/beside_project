@@ -6,6 +6,7 @@ import os
 from .models import Meme as Meme_model
 from .s3_connect import presigned_s3_upload, presigned_s3_view
 from .serializers import MemeSerializer
+from urllib.parse import urlparse, urlunparse
 
 
 class GetUploadURL(APIView):
@@ -64,9 +65,22 @@ class GetUploadURL(APIView):
 
 
 class Memes(APIView):
+    @swagger_auto_schema(
+        operation_id="Response random 4 memes",
+        responses={200: MemeSerializer(many=True)},
+    )
     def get(self, request):
-        meme = Meme_model.objects.all()
-        serializer = MemeSerializer(meme, many=True)
+        memes = Meme_model.objects.order_by("?")[:4]
+        serializer = MemeSerializer(memes, many=True)
+        for meme in serializer.data:
+            thumbnail_url = meme["thumbnail"]
+            key = urlparse(thumbnail_url).path.lstrip("/").split("miimgoo/")[-1]
+            meme["thumbnail"] = presigned_s3_view(key)
+
+            thumbnail_url = meme["meme_url"]
+            key = urlparse(thumbnail_url).path.lstrip("/").split("miimgoo/")[-1]
+            meme["meme_url"] = presigned_s3_view(key)
+
         return Response(serializer.data)
 
     @swagger_auto_schema(
