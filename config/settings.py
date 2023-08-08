@@ -164,6 +164,9 @@ CSRF_TRUSTED_ORIGINS = [
 
 DEV_DOMAIN = os.environ.get("DEV_DOMAIN")
 PROD_DOMAIN = os.environ.get("PROD_DOMAIN")
+FRONT_DOMAIN = os.environ.get("FRONT_DOMAIN")
+
+CSRF_TRUSTED_ORIGINS.appeend(FRONT_DOMAIN)
 
 if SERVER == "dev":
     CSRF_TRUSTED_ORIGINS.append(DEV_DOMAIN)
