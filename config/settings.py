@@ -115,6 +115,7 @@ if DEBUG:
         }
     }
 else:
+    print("DATABASES is POSTGRESQL")
     DATABASES = {
         "default": {
             "ENGINE": "django.db.backends.postgresql",
