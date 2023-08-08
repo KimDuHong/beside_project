@@ -35,7 +35,7 @@ class Meme(CommonModel):
             first_frame.save(temp_file, format="JPEG")
             # 임시 파일을 NCP Object Storage에 업로드
             temp_file.seek(0)
-            filename = filename.split("/gif/")[-1][:-4]
+            filename = filename.split("/data/")[-1][:-4]
             file_name = f"memes/thumbnails/{uuid4()}.jpg"
 
             s3.upload_fileobj(temp_file, "miimgoo", file_name)
