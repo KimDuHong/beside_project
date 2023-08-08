@@ -151,7 +151,9 @@ USE_TZ = True
 
 STATIC_URL = "static/"
 STATIC_ROOT = "/static/file/"
-STATICFILES_STORAGE = "whitenoise.storage.CompressedStaticFilesStorage"
+
+if not DEBUG:
+    STATICFILES_STORAGE = "whitenoise.storage.CompressedStaticFilesStorage"
 
 SERVER = os.environ.get("SERVER", "local")
 
