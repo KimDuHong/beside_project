@@ -171,7 +171,7 @@ CSRF_TRUSTED_ORIGINS.append(FRONT_DOMAIN)
 if SERVER == "dev":
     CSRF_TRUSTED_ORIGINS.append(DEV_DOMAIN)
 
-if SERVER == "Prod":
+if SERVER == "prod":
     CSRF_TRUSTED_ORIGINS.append(PROD_DOMAIN)
     SESSION_COOKIE_DOMAIN = ".miimgoo.site"
     CSRF_COOKIE_DOMAIN = ".miimgoo.site"
