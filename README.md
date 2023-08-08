@@ -27,7 +27,6 @@ $ python manage.py runserver
 
 ```bash
 $ docker-compose up --build
-
 # visit 0.0.0.0:8000
 ```
 
