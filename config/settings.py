@@ -153,6 +153,8 @@ STATIC_URL = "static/"
 STATIC_ROOT = "/static/file/"
 STATICFILES_STORAGE = "whitenoise.storage.CompressedStaticFilesStorage"
 
+SERVER = os.environ.get("SERVER", "local")
+
 CORS_ALLOW_ALL_ORIGINS = True
 CORS_ALLOW_CREDENTIALS = True
 
@@ -161,6 +163,16 @@ CSRF_TRUSTED_ORIGINS = [
     "http://localhost:3000",
 ]
 
+DEV_DOMAIN = env("DEV_DOMAIN")
+PROD_DOMAIN = env("PROD_DOMAIN")
+
+if SERVER == "dev":
+    CSRF_TRUSTED_ORIGINS.append("https://backend.miimgoo.site")
+
+if SERVER == "prod":
+    CSRF_TRUSTED_ORIGINS.append("https://prod.miimgoo.site")
+    SESSION_COOKIE_DOMAIN = ".miimgoo.site"
+    CSRF_COOKIE_DOMAIN = ".miimgoo.site"
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field
@@ -171,7 +183,6 @@ AUTH_USER_MODEL = "users.User"
 import sentry_sdk
 from sentry_sdk.integrations.django import DjangoIntegration
 
-SERVER = os.environ.get("SERVER", "local")
 
 if SERVER != "local":
     sentry_sdk.init(
