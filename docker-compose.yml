@@ -27,7 +27,7 @@ services:
     env_file:
       - .env
     environment:
-      SERVER: "Prod"
+      SERVER: "prod"
 
     command: bash ./prod_build.sh
 

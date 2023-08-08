@@ -152,9 +152,6 @@ USE_TZ = True
 STATIC_URL = "static/"
 STATIC_ROOT = "/static/staticfiles/"
 
-if not DEBUG:
-    STATICFILES_STORAGE = "whitenoise.storage.CompressedStaticFilesStorage"
-
 SERVER = os.environ.get("SERVER", "local")
 
 CORS_ALLOW_ALL_ORIGINS = True
@@ -171,7 +168,7 @@ PROD_DOMAIN = os.environ.get("PROD_DOMAIN")
 if SERVER == "dev":
     CSRF_TRUSTED_ORIGINS.append(DEV_DOMAIN)
 
-if SERVER == "prod":
+if SERVER == "Prod":
     CSRF_TRUSTED_ORIGINS.append(PROD_DOMAIN)
     SESSION_COOKIE_DOMAIN = ".miimgoo.site"
     CSRF_COOKIE_DOMAIN = ".miimgoo.site"
@@ -206,7 +203,9 @@ if SERVER != "local":
 NCP_ACCESS_KEY = os.environ.get("NCP_ACCESS_KEY")
 NCP_SECRET_KEY = os.environ.get("NCP_SECRET_KEY")
 
-if SERVER == "Prod":
+print("SERVER is" + SERVER)
+
+if SERVER == "prod":
     NAVER_CLIENT_ID = os.environ.get("PROD_NAVER_CLLIENT_ID")
     KAKAO_CLIENT_ID = os.environ.get("PROD_KAKAO_CLLIENT_ID")
 
