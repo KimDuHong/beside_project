@@ -19,7 +19,7 @@ def test_meme_data_jpg():
 def test_meme_data_gif():
     return {
         "title": "Test Meme",
-        "meme_url": "https://kr.object.ncloudstorage.com/miimgoo/memes/gif/test.gif",
+        "meme_url": "https://kr.object.ncloudstorage.com/miimgoo/memes/data/test.gif",
         "tags": ["행복"],
     }
 
