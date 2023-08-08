@@ -165,14 +165,14 @@ CSRF_TRUSTED_ORIGINS = [
     "http://localhost:3000",
 ]
 
-DEV_DOMAIN = env("DEV_DOMAIN")
-PROD_DOMAIN = env("PROD_DOMAIN")
+DEV_DOMAIN = os.environ.get("DEV_DOMAIN")
+PROD_DOMAIN = os.environ.get("PROD_DOMAIN")
 
 if SERVER == "dev":
-    CSRF_TRUSTED_ORIGINS.append("https://backend.miimgoo.site")
+    CSRF_TRUSTED_ORIGINS.append(DEV_DOMAIN)
 
 if SERVER == "prod":
-    CSRF_TRUSTED_ORIGINS.append("https://prod.miimgoo.site")
+    CSRF_TRUSTED_ORIGINS.append(PROD_DOMAIN)
     SESSION_COOKIE_DOMAIN = ".miimgoo.site"
     CSRF_COOKIE_DOMAIN = ".miimgoo.site"
 
