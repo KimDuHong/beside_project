@@ -23,7 +23,7 @@ services:
       - 8001:8001
     volumes:
       - .:/beside_project
-      - static_volume:/static/file
+      - static_volume:/static/staticfiles
     env_file:
       - .env
     environment:
@@ -43,7 +43,7 @@ services:
       - 443:443
     volumes:
       - /etc/letsencrypt:/etc/letsencrypt
-      - static_volume:/static/file
+      - static_volume:/static/staticfiles
     depends_on:
       - backend
       - prod_backend
