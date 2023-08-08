@@ -219,7 +219,7 @@ if SERVER != "local":
 NCP_ACCESS_KEY = os.environ.get("NCP_ACCESS_KEY")
 NCP_SECRET_KEY = os.environ.get("NCP_SECRET_KEY")
 
-print("SERVER is" + SERVER)
+print("SERVER is " + SERVER)
 
 if SERVER == "prod":
     NAVER_CLIENT_ID = os.environ.get("PROD_NAVER_CLLIENT_ID")
