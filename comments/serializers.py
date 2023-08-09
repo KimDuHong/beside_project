@@ -4,7 +4,7 @@ from users.serializers import TinyUserSerializer
 
 
 class CommentSerializer(ModelSerializer):
-    user = TinyUserSerializer
+    user = TinyUserSerializer(read_only=True)
 
     class Meta:
         model = Comment

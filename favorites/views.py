@@ -6,6 +6,29 @@ from rest_framework.permissions import IsAuthenticated
 from django.shortcuts import get_object_or_404
 from memes.models import Meme
 from .models import Favoirte_meme
+from .serializers import FavoriteMemeSerializer
+from memes.s3_connect import convert_url_to_presigned
+
+
+class MyFavoirtes(APIView):
+    permission_classes = [IsAuthenticated]
+
+    @swagger_auto_schema(
+        operation_summary="Response request User's Memes to Favorites",
+        operation_description="Request user's favorites list",
+        responses={
+            200: FavoriteMemeSerializer(many=True),
+            401: openapi.Response(description="The user is not authenticated"),
+        },
+    )
+    def get(self, request):
+        favoirte_memes = Favoirte_meme.objects.filter(user=request.user)
+        memes = FavoriteMemeSerializer(favoirte_memes, many=True).data
+        for meme in memes:
+            for url_key in ["thumbnail", "meme_url"]:
+                convert_url_to_presigned(meme["meme"], url_key)
+
+        return Response({"favorites": memes})
 
 
 class MemeFavoirtes(APIView):

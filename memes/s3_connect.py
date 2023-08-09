@@ -1,6 +1,7 @@
 from django.conf import settings
 import boto3
 from django.conf import settings
+from urllib.parse import urlparse
 
 
 def connect_s3():
@@ -37,3 +38,10 @@ def presigned_s3_upload(filename, ExpiresIn=3600):
         ExpiresIn=ExpiresIn,
     )
     return response
+
+
+def convert_url_to_presigned(meme_data, url_key):
+    """URL을 presigned URL로 변환하는 함수"""
+    url = meme_data[url_key]
+    key = urlparse(url).path.lstrip("/").split("miimgoo/")[-1]
+    meme_data[url_key] = presigned_s3_view(key)

@@ -11,7 +11,7 @@ from rest_framework.exceptions import ParseError
 from drf_yasg.utils import swagger_auto_schema
 from urllib.parse import urlparse, urlunparse
 from .models import Meme as Meme_model
-from .s3_connect import presigned_s3_upload, presigned_s3_view
+from .s3_connect import presigned_s3_upload, presigned_s3_view, convert_url_to_presigned
 from .serializers import MemeSerializer, MemeDetailSerailizer
 
 
@@ -80,14 +80,10 @@ class Memes(APIView):
     def get(self, request):
         memes = Meme_model.objects.order_by("?")[:4]
         serializer = MemeSerializer(memes, many=True)
-        for meme in serializer.data:
-            thumbnail_url = meme["thumbnail"]
-            key = urlparse(thumbnail_url).path.lstrip("/").split("miimgoo/")[-1]
-            meme["thumbnail"] = presigned_s3_view(key)
 
-            thumbnail_url = meme["meme_url"]
-            key = urlparse(thumbnail_url).path.lstrip("/").split("miimgoo/")[-1]
-            meme["meme_url"] = presigned_s3_view(key)
+        for meme in serializer.data:
+            for url_key in ["thumbnail", "meme_url"]:
+                convert_url_to_presigned(meme, url_key)
 
         return Response(serializer.data)
 
