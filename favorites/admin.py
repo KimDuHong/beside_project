@@ -1,3 +1,11 @@
 from django.contrib import admin
+from .models import Favoirte_meme
 
-# Register your models here.
+
+@admin.register(Favoirte_meme)
+class Favoirte_meme_Admin(admin.ModelAdmin):
+    list_display = (
+        "pk",
+        "user",
+        "meme",
+    )

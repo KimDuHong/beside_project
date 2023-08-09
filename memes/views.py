@@ -1,12 +1,18 @@
+import os
+import json
+from itertools import combinations
+from collections import defaultdict
+from django.db.models import Count, Q
+from django.shortcuts import get_object_or_404
+from drf_yasg import openapi
 from rest_framework.views import APIView
 from rest_framework.response import Response
+from rest_framework.exceptions import ParseError
 from drf_yasg.utils import swagger_auto_schema
-from drf_yasg import openapi
-import os
+from urllib.parse import urlparse, urlunparse
 from .models import Meme as Meme_model
 from .s3_connect import presigned_s3_upload, presigned_s3_view
-from .serializers import MemeSerializer
-from urllib.parse import urlparse, urlunparse
+from .serializers import MemeSerializer, MemeDetailSerailizer
 
 
 class GetUploadURL(APIView):
@@ -120,11 +126,108 @@ class Memes(APIView):
 
 
 class DetailMeme(APIView):
+    @swagger_auto_schema(
+        operation_summary="Response detail meme",
+        responses={
+            200: openapi.Response(
+                description="Successful Response",
+                schema=MemeDetailSerailizer,
+            ),
+            404: "404 Not Found",
+        },
+    )
     def get(self, request, pk):
-        pass
+        meme = get_object_or_404(Meme_model, pk=pk)
+        meme.visited += 1
+
+        serializer = MemeDetailSerailizer(
+            meme,
+            context={"request": request},
+        )
+        data = dict(serializer.data)
+        thumbnail_url = data["meme_url"]
+        key = urlparse(thumbnail_url).path.lstrip("/").split("miimgoo/")[-1]
+        data["meme_url"] = presigned_s3_view(key)
+        return Response(data)
 
     def put(self, request, pk):
         pass
 
     def delete(self, request, pk):
         pass
+
+
+class MemeSearchByTag(APIView):
+    @swagger_auto_schema(
+        operation_summary="Search by tag",
+        operation_description="Request with the tag of the meme to be searched as a parameter",
+        manual_parameters=[
+            openapi.Parameter(
+                "tags",
+                in_=openapi.IN_QUERY,
+                description="Tags for the search",
+                required=True,
+                type=openapi.TYPE_ARRAY,
+                items=openapi.Items(type=openapi.TYPE_STRING),
+                collection_format="multi",
+            )
+        ],
+        responses={200: "Success", 400: "Bad Request"},
+    )
+    def get(self, request):
+        tag_json = request.GET.get("tags", "[]")
+
+        try:
+            tag_list = json.loads(tag_json)
+        except json.JSONDecodeError:
+            return Response({"error": "Invalid tag format"})
+
+        if not isinstance(tag_list, list):
+            return Response({"error": "NOT LIST"})
+
+        if not tag_list:
+            raise ParseError
+
+        results_by_combinations = {}
+
+        all_tagged_memes = Meme_model.objects.filter(
+            tags__name__in=tag_list
+        ).values_list("id", "tags__name")
+
+        filtered_memes_by_tag = defaultdict(set)
+        for meme_id, tag_name in all_tagged_memes:
+            filtered_memes_by_tag[tag_name].add(meme_id)
+
+            # Prefetch related tags for better performance
+        all_memes_with_tags = Meme_model.objects.prefetch_related("tags")
+
+        # Iterate through tag combinations starting with the longest combination
+        for r in range(len(tag_list), 0, -1):
+            for tag_combination in combinations(tag_list, r):
+                combined_meme_ids = filtered_memes_by_tag[tag_combination[0]].copy()
+                for tag in tag_combination[1:]:
+                    combined_meme_ids &= filtered_memes_by_tag[tag]
+
+                # Fetch the actual meme objects from the IDs
+                combined_memes = [
+                    meme for meme in all_memes_with_tags if meme.id in combined_meme_ids
+                ]
+
+                serializer = MemeSerializer(combined_memes, many=True)
+                for meme in serializer.data:
+                    for field in ["thumbnail", "meme_url"]:
+                        url = meme[field]
+                        key = urlparse(url).path.lstrip("/").split("miimgoo/")[-1]
+                        meme[field] = presigned_s3_view(key)
+
+                results_by_combinations[", ".join(tag_combination)] = serializer.data
+
+                # Exclude the memes we've already processed
+                for tag in tag_list:
+                    filtered_memes_by_tag[tag] -= combined_meme_ids
+
+        results_by_combinations = {
+            k: v for k, v in results_by_combinations.items() if v
+        }
+
+        return Response(results_by_combinations)

@@ -1,12 +1,14 @@
+from django.db.transaction import atomic
+from django.shortcuts import get_object_or_404
+from urllib.parse import urlparse, urlunparse
 from rest_framework.serializers import ModelSerializer
 from rest_framework.exceptions import ValidationError
-from tags.serializers import TagSerializer
-from .models import Meme
-from django.shortcuts import get_object_or_404
-from tags.models import Tag
-from urllib.parse import urlparse, urlunparse
-from django.db.transaction import atomic
 from rest_framework import serializers
+
+from .models import Meme
+from tags.models import Tag
+from tags.serializers import TagSerializer
+from comments.serializers import CommentSerializer
 
 
 class MemeSerializer(ModelSerializer):
@@ -20,6 +22,8 @@ class MemeSerializer(ModelSerializer):
             "thumbnail",
             "meme_url",
             "tags",
+            "visited",
+            "favorites",
         )
 
     def validate_tags(self, tags):
@@ -47,3 +51,21 @@ class MemeSerializer(ModelSerializer):
                 meme.tags.add(tag)
 
             return meme
+
+
+class MemeDetailSerailizer(ModelSerializer):
+    tags = TagSerializer(read_only=True, many=True)
+    comment = CommentSerializer(read_only=True, many=True)
+
+    class Meta:
+        model = Meme
+        fields = (
+            "pk",
+            "tags",
+            "title",
+            "meme_url",
+            "visited",
+            "comment",
+            "created_at",
+            "updated_at",
+        )

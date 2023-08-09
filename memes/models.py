@@ -14,6 +14,14 @@ class Meme(CommonModel):
     thumbnail = models.URLField(editable=False)
     meme_url = models.URLField()
     tags = models.ManyToManyField(Tag, related_name="tags")
+    visited = models.PositiveIntegerField(
+        editable=False,
+        default=0,
+    )
+
+    @property
+    def favorites(self):
+        return self.favoirte_meme.count()
 
     @property
     def all_tags(self):
@@ -46,3 +54,6 @@ class Meme(CommonModel):
             self.thumbnail = self.meme_url
 
         super().save(*args, **kwargs)
+
+    def __str__(self) -> str:
+        return f"{self.title}"

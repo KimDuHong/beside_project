@@ -14,10 +14,24 @@ schema_view = get_schema_view(
     public=True,
     permission_classes=[permissions.AllowAny],
 )
+
 urlpatterns = [
     path("admin/", admin.site.urls),
     path("api/memes/", include("memes.urls")),
     path("api/users/", include("users.urls")),
+    path("api/favorites/", include("favorites.urls")),
+]
+
+if settings.DEBUG:
+    import debug_toolbar
+
+    urlpatterns += [
+        path("__debug__/", include(debug_toolbar.urls)),
+        # For django versions before 2.0:
+        # url(r'^__debug__/', include(debug_toolbar.urls)),
+    ]
+
+API_DOC = [
     path(
         "swagger/",
         schema_view.with_ui("swagger", cache_timeout=0),
@@ -30,11 +44,4 @@ urlpatterns = [
     ),
 ]
 
-if settings.DEBUG:
-    import debug_toolbar
-
-    urlpatterns += [
-        path("__debug__/", include(debug_toolbar.urls)),
-        # For django versions before 2.0:
-        # url(r'^__debug__/', include(debug_toolbar.urls)),
-    ]
+urlpatterns += API_DOC
