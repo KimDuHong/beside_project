@@ -20,6 +20,7 @@ urlpatterns = [
     path("api/memes/", include("memes.urls")),
     path("api/users/", include("users.urls")),
     path("api/favorites/", include("favorites.urls")),
+    path("api/tags/", include("tags.urls")),
 ]
 
 if settings.DEBUG:
