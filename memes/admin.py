@@ -3,7 +3,7 @@ from .models import Meme
 
 
 @admin.register(Meme)
-class TagAdmin(admin.ModelAdmin):
+class MemeAdmin(admin.ModelAdmin):
     list_display = (
         "title",
         "thumbnail",
