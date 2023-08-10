@@ -9,10 +9,12 @@ from .models import Meme
 from tags.models import Tag
 from tags.serializers import TagSerializer
 from comments.serializers import CommentSerializer
+from favorites.models import Favoirte_meme
 
 
 class MemeSerializer(ModelSerializer):
     tags = TagSerializer(read_only=True, many=True)
+    is_favorite = serializers.SerializerMethodField()
 
     class Meta:
         model = Meme
@@ -24,7 +26,14 @@ class MemeSerializer(ModelSerializer):
             "tags",
             "visited",
             "favorites",
+            "is_favorite",
         )
+
+    def get_is_favorite(self, data):
+        request = self.context.get("request")
+        if request and request.user.is_authenticated:
+            return Favoirte_meme.objects.filter(user=request.user, meme=data).exists()
+        return False
 
     def validate_tags(self, tags):
         if isinstance(tags, list):
@@ -56,6 +65,7 @@ class MemeSerializer(ModelSerializer):
 class MemeDetailSerailizer(ModelSerializer):
     tags = TagSerializer(read_only=True, many=True)
     comment = CommentSerializer(read_only=True, many=True)
+    is_favorite = serializers.SerializerMethodField()
 
     class Meta:
         model = Meme
@@ -65,7 +75,14 @@ class MemeDetailSerailizer(ModelSerializer):
             "title",
             "meme_url",
             "visited",
+            "is_favorite",
             "comment",
             "created_at",
             "updated_at",
         )
+
+    def get_is_favorite(self, data):
+        request = self.context.get("request")
+        if request and request.user.is_authenticated:
+            return Favorite.objects.filter(user=request.user, feed=data).exists()
+        return False

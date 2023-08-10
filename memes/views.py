@@ -4,6 +4,8 @@ from itertools import combinations
 from collections import defaultdict
 from django.db.models import Count, Q
 from django.shortcuts import get_object_or_404
+from django.core.paginator import Paginator
+from django.db.models import Count
 from drf_yasg import openapi
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -118,7 +120,11 @@ class Memes(APIView):
     def post(self, request):
         serializer = MemeSerializer(data=request.data)
         if serializer.is_valid():
-            serializer.save(tags=request.data.get("tags"))
+            meme = serializer.save(tags=request.data.get("tags"))
+            visited = request.data.get("visited")
+            if visited:
+                meme.visited = visited
+                meme.save()
             return Response(serializer.data, status=201)
         return Response(serializer.errors, status=400)
 
@@ -153,6 +159,41 @@ class DetailMeme(APIView):
 
     def delete(self, request, pk):
         pass
+
+
+class MemesSortedVisited(APIView):
+    @swagger_auto_schema(
+        operation_summary="View memes sorted visited count",
+        manual_parameters=[
+            openapi.Parameter(
+                "page",
+                openapi.IN_QUERY,
+                description="Per page 4 data",
+                type=openapi.TYPE_INTEGER,
+            ),
+        ],
+        responses={200: MemeSerializer},
+    )
+    def get(self, request):
+        feed = Meme_model.objects.order_by("-visited")
+        items_per_page = 4
+        current_page = request.GET.get("page", 1)
+        paginator = Paginator(feed, items_per_page)
+        try:
+            page = paginator.page(current_page)
+        except:
+            page = paginator.page(paginator.num_pages)
+
+        if int(current_page) > int(paginator.num_pages):
+            raise ParseError("that page is out of range")
+
+        serializer = MemeSerializer(
+            page,
+            many=True,
+            context={"request": request},
+        )
+
+        return Response(serializer.data)
 
 
 class MemeSearchByTag(APIView):
