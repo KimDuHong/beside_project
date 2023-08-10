@@ -8,4 +8,6 @@ class TagAdmin(admin.ModelAdmin):
         "pk",
         "name",
         "type",
+        "created_at",
+        "updated_at",
     )

@@ -121,10 +121,10 @@ class Memes(APIView):
         serializer = MemeSerializer(data=request.data)
         if serializer.is_valid():
             meme = serializer.save(tags=request.data.get("tags"))
-            visited = request.data.get("visited")
-            if visited:
-                meme.visited = visited
-                meme.save()
+            # visited = request.data.get("visited")
+            # if visited:
+            #     meme.visited = visited
+            #     meme.save()
             return Response(serializer.data, status=201)
         return Response(serializer.errors, status=400)
 
