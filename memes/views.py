@@ -8,11 +8,13 @@ from drf_yasg import openapi
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.exceptions import ParseError
+from rest_framework.permissions import IsAuthenticatedOrReadOnly
 from drf_yasg.utils import swagger_auto_schema
 from urllib.parse import urlparse, urlunparse
 from .models import Meme as Meme_model
 from .s3_connect import presigned_s3_upload, presigned_s3_view, convert_url_to_presigned
 from .serializers import MemeSerializer, MemeDetailSerailizer
+from comments.serializers import CommentSerializer
 
 
 class GetUploadURL(APIView):
@@ -227,3 +229,38 @@ class MemeSearchByTag(APIView):
         }
 
         return Response(results_by_combinations)
+
+
+class DetailMemeComment(APIView):
+    permission_classes = [IsAuthenticatedOrReadOnly]
+
+    @swagger_auto_schema(
+        operation_summary="Create comment about meme",
+        operation_description="memes id required",
+        request_body=openapi.Schema(
+            type=openapi.TYPE_OBJECT,
+            required=["description"],
+            properties={
+                "description": openapi.Schema(
+                    type=openapi.TYPE_STRING, description="Comment content"
+                )
+            },
+        ),
+        responses={
+            201: openapi.Response(
+                description="Successful Response", schema=CommentSerializer
+            ),
+            400: "Description 형식 오류",
+            403: "Login Error",
+            404: "존재하지 않는 feed pk",
+        },
+    )
+    def post(self, request, pk):
+        meme = get_object_or_404(Meme_model, pk=pk)
+        serializer = CommentSerializer(data=request.data)
+        if serializer.is_valid():
+            comment = serializer.save(meme=meme, user=request.user)
+            serializer = CommentSerializer(comment)
+            return Response(serializer.data)
+        else:
+            return Response(serializer.errors, status=400)

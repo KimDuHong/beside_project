@@ -8,11 +8,11 @@ class AllTagView(APIView):
     type_mapping = {"circum": "상황", "emotion": "감정", "people": "인물", "other": "기타"}
 
     def get(self, request):
-        tag_type = request.GET.get("type")  # type 파라미터를 가져옵니다.
+        tag_type = request.GET.get("type")
         tag_type_kor = self.type_mapping.get(tag_type)
 
         if tag_type_kor:
-            tags = Tag.objects.filter(type=tag_type_kor)  # 해당 type에 맞는 태그만 필터링하여 가져옵니다.
+            tags = Tag.objects.filter(type=tag_type_kor)
         else:
             tags = Tag.objects.all()
 
