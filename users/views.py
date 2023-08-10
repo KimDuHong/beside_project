@@ -4,7 +4,7 @@ from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.exceptions import NotFound, ParseError, PermissionDenied
-from rest_framework.status import HTTP_409_CONFLICT
+from rest_framework.status import HTTP_403_FORBIDDEN
 from django.conf import settings
 from . import serializers
 from .models import User
@@ -94,6 +94,7 @@ class KakaoLogin(APIView):
                 description="Create user",
             ),
             400: "Bad request",
+            403: "Email field is Null case",
         },
     )
     def post(self, request):
@@ -124,6 +125,10 @@ class KakaoLogin(APIView):
             ).json()
             kakao_account = user_data.get("kakao_account")
             profile = kakao_account.get("profile")
+
+            if not kakao_account.get("email"):
+                return Response("E-mail is required", HTTP_403_FORBIDDEN)
+
             try:
                 user = User.objects.get(email=kakao_account.get("email"))
                 login(request, user)
