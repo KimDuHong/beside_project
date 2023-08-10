@@ -31,6 +31,18 @@ class UserMe(APIView):
         serializer = serializers.PrivateUserSerializer(user)
         return Response(serializer.data)
 
+    @swagger_auto_schema(
+        operation_summary="Delete user",
+        responses={
+            200: "Success",
+            403: "Permission denied",
+        },
+    )
+    def delete(self, request):
+        user = request.user
+        user.delete()
+        return Response("Success", 204)
+
 
 class KakaoLoginRequest(APIView):
     @swagger_auto_schema(
