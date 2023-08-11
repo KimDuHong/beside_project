@@ -84,5 +84,5 @@ class MemeDetailSerailizer(ModelSerializer):
     def get_is_favorite(self, data):
         request = self.context.get("request")
         if request and request.user.is_authenticated:
-            return Favorite.objects.filter(user=request.user, feed=data).exists()
+            return Favoirte_meme.objects.filter(user=request.user, meme=data).exists()
         return False
