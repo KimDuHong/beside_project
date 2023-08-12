@@ -1,5 +1,6 @@
 import os
 import json
+import requests
 from itertools import combinations
 from collections import defaultdict
 from django.db.models import Count, Q
@@ -215,11 +216,13 @@ class MemeSearchByTag(APIView):
         responses={200: "Success", 400: "Bad Request"},
     )
     def get(self, request):
+        # Convert the string representation of bytes to actual bytes
+
         tag_json = request.GET.get("tags", "[]")
-        tag_json = unquote(tag_json)  # This will decode the URL-encoded string
+        decoded_tmp = unquote(tag_json)  # This will decode the URL-encoded string
 
         try:
-            tag_list = json.loads(tag_json)
+            tag_list = json.loads(decoded_tmp)
         except json.JSONDecodeError:
             return Response({"error": "Invalid tag format"}, 400)
 
@@ -307,3 +310,32 @@ class DetailMemeComment(APIView):
             return Response(serializer.data)
         else:
             return Response(serializer.errors, status=400)
+
+
+class getBlob(APIView):
+    def post(self, request):
+        pass
+
+
+#         image_url = request.data.get("url")
+#         print(image_url)
+#         filename = image_url.split("/").pop().split("?")[0]
+#         decoded_filename = unquote(filename)
+#         print(decoded_filename)
+# x
+#         file_type = filename.split(".")[-1]
+#         try:
+#             response = requests.get(image_url)
+#             if response.status_code == 200:
+#                 image_data = response.content
+#                 return Response(
+#                     {
+#                         "data": image_data,
+#                         "type": f"image/{file_type}",
+#                         "filename": decoded_filename,
+#                     }
+#                 )
+#             else:
+#                 return Response({"error": "Failed to fetch image"})
+#         except Exception as e:
+#             return Response({"error": str(e)})

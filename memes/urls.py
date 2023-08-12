@@ -6,10 +6,12 @@ from .views import (
     MemeSearchByTag,
     DetailMemeComment,
     MemesSortedVisited,
+    getBlob,
 )
 
 urlpatterns = [
     path("uploadURL/", GetUploadURL.as_view()),
+    path("download/", getBlob.as_view()),
     path("", Memes.as_view(), name="meme-list"),
     path("top-visited/", MemesSortedVisited.as_view()),
     path("<int:pk>/", DetailMeme.as_view()),

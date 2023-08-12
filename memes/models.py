@@ -26,7 +26,7 @@ class Meme(CommonModel):
 
     @property
     def all_tags(self):
-        return [i.name for i in self.tags.all()]
+        return self.tags.all()
 
     @property
     def favorite_count(self):

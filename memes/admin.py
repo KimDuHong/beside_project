@@ -12,3 +12,4 @@ class MemeAdmin(admin.ModelAdmin):
         "visited",
         "favorite_count",
     )
+    list_filter = ("title",)
