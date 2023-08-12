@@ -316,11 +316,8 @@ class DetailMemeComment(APIView):
 class getBlob(APIView):
     def post(self, request):
         image_url = request.data.get("url")
-        print(image_url)
         filename = image_url.split("/").pop().split("?")[0]
-        print(filename)
         filename = unquote(filename)
-        print(filename)
         file_type = filename.split(".")[-1]
         try:
             response = requests.get(image_url)

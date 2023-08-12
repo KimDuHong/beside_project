@@ -42,7 +42,7 @@ class UserMe(APIView):
         user = request.user
         logout(request)
         user.delete()
-        return Response({"Delete": "Success"}, 204)
+        return Response(status=204)
 
 
 class KakaoLoginRequest(APIView):
