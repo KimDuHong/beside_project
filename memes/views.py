@@ -1,6 +1,7 @@
 import os
 import json
 import requests
+import base64
 from itertools import combinations
 from collections import defaultdict
 from django.db.models import Count, Q
@@ -325,9 +326,10 @@ class getBlob(APIView):
             response = requests.get(image_url)
             if response.status_code == 200:
                 image_data = response.content
+                base64_encoded = base64.b64encode(image_data).decode("utf-8")
                 return Response(
                     {
-                        "data": image_data,
+                        "data": base64_encoded,
                         "type": f"image/{file_type}",
                         "filename": filename,
                     }
