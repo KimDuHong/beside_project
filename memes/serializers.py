@@ -36,14 +36,14 @@ class MemeSerializer(ModelSerializer):
         return False
 
     def validate_tags(self, tags):
-        if isinstance(tags, list):
+        if isinstance(tags, dict):
             return True
         else:
             raise ValidationError("Tags must be a list")
 
     def create(self, validated_data):
         with atomic():
-            tags_data = validated_data.pop("tags", [])
+            tags_data = validated_data.pop("tags", {})
             if not tags_data:
                 raise ValidationError("Tags is required")
             self.validate_tags(tags_data)
@@ -55,9 +55,10 @@ class MemeSerializer(ModelSerializer):
 
             meme = Meme.objects.create(**validated_data)
 
-            for tag_data in tags_data:
-                tag = get_object_or_404(Tag, name=tag_data)
-                meme.tags.add(tag)
+            for key, values in tags_data.items():
+                for value in values:
+                    tag = get_object_or_404(Tag, key=key, name=value)
+                    meme.tags.add(tag)
 
             return meme
 

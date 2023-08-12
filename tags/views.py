@@ -21,7 +21,6 @@ class AllTagView(APIView):
         if tag_type_kor:
             return Response({tag_type_kor: [item["name"] for item in serializer.data]})
 
-        # 모든 태그 데이터를 초기화합니다.
         result = {
             "상황": [item["name"] for item in serializer.data if item["type"] == "상황"],
             "감정": [item["name"] for item in serializer.data if item["type"] == "감정"],
