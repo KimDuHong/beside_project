@@ -314,28 +314,25 @@ class DetailMemeComment(APIView):
 
 class getBlob(APIView):
     def post(self, request):
-        pass
-
-
-#         image_url = request.data.get("url")
-#         print(image_url)
-#         filename = image_url.split("/").pop().split("?")[0]
-#         decoded_filename = unquote(filename)
-#         print(decoded_filename)
-# x
-#         file_type = filename.split(".")[-1]
-#         try:
-#             response = requests.get(image_url)
-#             if response.status_code == 200:
-#                 image_data = response.content
-#                 return Response(
-#                     {
-#                         "data": image_data,
-#                         "type": f"image/{file_type}",
-#                         "filename": decoded_filename,
-#                     }
-#                 )
-#             else:
-#                 return Response({"error": "Failed to fetch image"})
-#         except Exception as e:
-#             return Response({"error": str(e)})
+        image_url = request.data.get("url")
+        print(image_url)
+        filename = image_url.split("/").pop().split("?")[0]
+        print(filename)
+        filename = unquote(filename)
+        print(filename)
+        file_type = filename.split(".")[-1]
+        try:
+            response = requests.get(image_url)
+            if response.status_code == 200:
+                image_data = response.content
+                return Response(
+                    {
+                        "data": image_data,
+                        "type": f"image/{file_type}",
+                        "filename": filename,
+                    }
+                )
+            else:
+                return Response({"error": "Failed to fetch image"})
+        except Exception as e:
+            return Response({"error": str(e)})

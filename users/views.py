@@ -40,7 +40,7 @@ class UserMe(APIView):
     )
     def delete(self, request):
         user = request.user
-        logout(user)
+        logout(request)
         user.delete()
         return Response({"Delete": "Success"}, 204)
 
