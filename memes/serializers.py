@@ -13,6 +13,8 @@ from favorites.models import Favoirte_meme
 
 
 class MemeSerializer(ModelSerializer):
+    type_mapping = {"circum": "상황", "emotion": "감정", "people": "인물", "other": "기타"}
+
     tags = TagSerializer(read_only=True, many=True)
     is_favorite = serializers.SerializerMethodField()
 
@@ -39,7 +41,7 @@ class MemeSerializer(ModelSerializer):
         if isinstance(tags, dict):
             return True
         else:
-            raise ValidationError("Tags must be a list")
+            raise ValidationError("Tags must be a object")
 
     def create(self, validated_data):
         with atomic():
@@ -54,10 +56,11 @@ class MemeSerializer(ModelSerializer):
             validated_data["meme_url"] = cleaned_url
 
             meme = Meme.objects.create(**validated_data)
-
+            print(tags_data)
             for key, values in tags_data.items():
+                key = self.type_mapping.get(key)
                 for value in values:
-                    tag = get_object_or_404(Tag, key=key, name=value)
+                    tag = get_object_or_404(Tag, type=key, name=value)
                     meme.tags.add(tag)
 
             return meme

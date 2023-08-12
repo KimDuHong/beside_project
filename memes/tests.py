@@ -11,7 +11,7 @@ def test_meme_data_jpg():
     return {
         "title": "Test Meme",
         "meme_url": "https://example.com/test.jpg",
-        "tags": ["행복"],
+        "tags": {"circum": ["위로"]},
     }
 
 
@@ -20,7 +20,7 @@ def test_meme_data_gif():
     return {
         "title": "Test Meme",
         "meme_url": "https://kr.object.ncloudstorage.com/miimgoo/memes/data/test.gif",
-        "tags": ["행복"],
+        "tags": {"circum": ["위로"]},
     }
 
 
@@ -28,7 +28,7 @@ def test_meme_data_gif():
 def test_meme_data_non_title():
     return {
         "meme_url": "https://kr.object.ncloudstorage.com/miimgoo/memes/gif/test.gif",
-        "tags": ["행복"],
+        "tags": {"circum": ["위로"]},
     }
 
 
@@ -36,7 +36,7 @@ def test_meme_data_non_title():
 def test_meme_data_non_url():
     return {
         "title": "Test Meme",
-        "tags": ["행복"],
+        "tags": {"circum": ["위로"]},
     }
 
 
