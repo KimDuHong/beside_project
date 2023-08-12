@@ -7,6 +7,7 @@ import requests
 from io import BytesIO
 from .s3_connect import connect_s3, presigned_s3_view
 from uuid import uuid4
+from favorites.models import Favoirte_meme
 
 
 class Meme(CommonModel):
@@ -25,7 +26,11 @@ class Meme(CommonModel):
 
     @property
     def all_tags(self):
-        return self.tags.all()
+        return [i.name for i in self.tags.all()]
+
+    @property
+    def favorite_count(self):
+        return Favoirte_meme.objects.filter(meme=self).count()
 
     def save(self, *args, **kwargs):
         s3 = connect_s3()

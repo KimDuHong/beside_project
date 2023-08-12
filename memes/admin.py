@@ -9,4 +9,6 @@ class MemeAdmin(admin.ModelAdmin):
         "thumbnail",
         "meme_url",
         "all_tags",
+        "visited",
+        "favorite_count",
     )

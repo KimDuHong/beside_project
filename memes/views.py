@@ -12,7 +12,8 @@ from rest_framework.response import Response
 from rest_framework.exceptions import ParseError
 from rest_framework.permissions import IsAuthenticatedOrReadOnly
 from drf_yasg.utils import swagger_auto_schema
-from urllib.parse import urlparse, urlunparse
+from urllib.parse import urlparse, urlunparse, unquote
+
 from .models import Meme as Meme_model
 from .s3_connect import presigned_s3_upload, presigned_s3_view, convert_url_to_presigned
 from .serializers import MemeSerializer, MemeDetailSerailizer
@@ -215,6 +216,7 @@ class MemeSearchByTag(APIView):
     )
     def get(self, request):
         tag_json = request.GET.get("tags", "[]")
+        tag_json = unquote(tag_json)  # This will decode the URL-encoded string
 
         try:
             tag_list = json.loads(tag_json)
