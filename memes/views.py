@@ -219,7 +219,7 @@ class MemeSearchByTag(APIView):
         try:
             tag_list = json.loads(tag_json)
         except json.JSONDecodeError:
-            return Response({"error": "Invalid tag format"})
+            return Response({"error": "Invalid tag format"}, 400)
 
         if not isinstance(tag_list, list):
             return Response({"error": "NOT LIST"})
