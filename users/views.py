@@ -276,3 +276,19 @@ class LogOut(APIView):
     def post(self, request):
         logout(request)
         return Response({"LogOut": True})
+
+
+class KakaoEmailReRequest(APIView):
+    def get(self, request):
+        kakaoParams = {
+            "client_id": settings.KAKAO_CLIENT_ID,
+            "redirect_uri": settings.KAKAO_REDIRECT_URI,
+            "response_type": "code",
+            "scope": "account_email",
+        }
+        response = requests.get(
+            "https://kauth.kakao.com/oauth/authorize",
+            params=kakaoParams,
+        )
+
+        return Response({"url": response.url})

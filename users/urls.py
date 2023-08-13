@@ -11,5 +11,10 @@ urlpatterns = [
     path(
         "kakao/request/", views.KakaoLoginRequest.as_view(), name="kakao_login_request"
     ),
+    path(
+        "kakao/request/again",
+        views.KakaoEmailReRequest.as_view(),
+        name="kakao_login_request_again",
+    ),
     path("logout/", views.LogOut.as_view(), name="logout"),
 ]
