@@ -48,6 +48,7 @@ CUSTOM_APPS = [
     "tags.apps.TagsConfig",
     "comments.apps.CommentsConfig",
     "favorites.apps.FavoritesConfig",
+    "common.apps.CommonConfig",
 ]
 
 SYSTEM_APPS = [
@@ -116,14 +117,14 @@ if DEBUG:
     }
 else:
     DATABASES = {
-        "before": {
-            "ENGINE": "django.db.backends.postgresql",
-            "NAME": env("POSTGRES_NAME"),
-            "USER": env("POSTGRES_USER"),
-            "PASSWORD": env("POSTGRES_PASSWORD"),
-            "HOST": env("POSTGRES_HOST"),
-            "PORT": env("POSTGRES_PORT"),
-        },
+        # "before": {
+        #     "ENGINE": "django.db.backends.postgresql",
+        #     "NAME": env("POSTGRES_NAME"),
+        #     "USER": env("POSTGRES_USER"),
+        #     "PASSWORD": env("POSTGRES_PASSWORD"),
+        #     "HOST": env("POSTGRES_HOST"),
+        #     "PORT": env("POSTGRES_PORT"),
+        # },
         "default": {
             "ENGINE": "django.db.backends.postgresql",
             "NAME": env("POSTGRES_NAME"),
